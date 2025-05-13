@@ -8,7 +8,8 @@
 
 #include "..\\YamYamEngine_SOURCE\\yaApplication.h"
 
-Application app;
+ya::Application application;
+
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -30,7 +31,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
     //깃허브 테스트
-    app.test();
     // TODO: 여기에 코드를 입력합니다.
 
     // 전역 문자열을 초기화합니다.
@@ -68,9 +68,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            int a = 0;
-            // 메시지가 없을 경우 여기서 처리
-            // 게임 로직이 들어가면 된다
+            application.Run();
         }
     }
 
@@ -131,6 +129,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+
+   application.Initialize(hWnd);
    //2개 이상의 윈도우도 생성 가능하다
    //HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
    //    CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
@@ -185,36 +185,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
 
-            //파랑 브러쉬 생성
-            HBRUSH blueBrush = CreateSolidBrush(RGB(0, 0, 255));
-            //파랑 브러쉬 DC에 선택 그리고 흰색 브러쉬 반환
-            HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, blueBrush);
-
-            Rectangle(hdc, 100, 100, 200, 200);
             
-            //다시 흰색 원본브러쉬로 선택
-            SelectObject(hdc, oldBrush);
-
-            // 파랑 브러쉬 삭제
-            DeleteObject(blueBrush);
-
-            HPEN redPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
-
-            HPEN oldPen = (HPEN)SelectObject(hdc, redPen);
-
-            Ellipse(hdc, 200, 200, 300, 300);
-
-            //
-            SelectObject(hdc, oldPen);
-            DeleteObject(redPen);
-
-            //기본으로 자주 사용되는 GDI오브젝트를 미리 DC안에 만들어두었는데
-            // 그 오브젝트들을 스톡 오브젝트라고 한다.
-            HBRUSH grayBrush = (HBRUSH)GetStockObject(GRAY_BRUSH);
-            oldBrush = (HBRUSH)SelectObject(hdc, grayBrush);
-            
-            Rectangle(hdc, 400, 400, 500, 500);
-            SelectObject(hdc, oldBrush);
             //DC란 화면에 출력에 필요한 모든 정보를 가지는 데이터 구조체이며
             // GDI모듈에 의해서 관리된다
             // 어떤 폰트를 사용할 것인가? 어떤 선의 굵기를 정해줄건가 어떤 색상으로 그려줄건가

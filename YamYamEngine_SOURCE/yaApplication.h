@@ -1,5 +1,6 @@
 #pragma once
 #include "CommonInclude.h"
+#include "yaGameObject.h"
 namespace ya
 {
 	class Application
@@ -18,7 +19,11 @@ namespace ya
 	private:
 		HWND mHwnd;
 		HDC mHdc;
-		float mSpeed;
+
+		//플레이어
+		//float mX;
+		//float mY;
+		GameObject mPlayer;
 	};
 }
 

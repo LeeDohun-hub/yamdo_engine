@@ -1,5 +1,5 @@
 #include "yaApplication.h"
-
+#include "yaInput.h"
 namespace ya
 {
 	Application::Application()
@@ -17,6 +17,8 @@ namespace ya
 		mHwnd = hwnd;
 		mHdc = GetDC(mHwnd);
 		mPlayer.SetPosition(0, 0);
+
+		Input::Initailize();
 	}
 	void Application::Run()
 	{
@@ -27,7 +29,7 @@ namespace ya
 
 	void Application::Update()
 	{
-
+		Input::Update();
 		mPlayer.Update();
 		
 	}

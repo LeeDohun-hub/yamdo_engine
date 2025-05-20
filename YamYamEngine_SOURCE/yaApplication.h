@@ -21,8 +21,6 @@ namespace ya
 		HDC mHdc;
 
 		//플레이어
-		//float mX;
-		//float mY;
 		GameObject mPlayer;
 	};
 }

@@ -1,10 +1,18 @@
 #include "yaApplication.h"
 #include "yaInput.h"
+#include "yaTime.h"
+
+
 namespace ya
 {
 	Application::Application()
 		: mHwnd(nullptr)
 		, mHdc(nullptr)
+		, mWidth(0)
+		, mHeight(0)
+		, mBackHdc(NULL)
+		, mBackBitmap(NULL)
+		, mGameObjects{}
 	{
 
 	}
@@ -12,13 +20,20 @@ namespace ya
 	{
 
 	}
-	void Application::Initialize(HWND hwnd)
+	void Application::Initialize(HWND hwnd, UINT width, UINT height)
 	{
-		mHwnd = hwnd;
-		mHdc = GetDC(mHwnd);
-		mPlayer.SetPosition(0, 0);
+		adjustWindowRect(hwnd, width, height);
+		createBuffer(width, height);
+		initializeEtc();
 
-		Input::Initailize();
+		//for (size_t i = 0; i < 100; i++)
+		//{
+		//	GameObject* gameObj = new GameObject();
+		//	gameObj->SetPosition(rand() % 1600, rand() % 900);
+		//	mGameObjects.push_back(gameObj);
+		//
+		//}
+
 	}
 	void Application::Run()
 	{
@@ -30,8 +45,15 @@ namespace ya
 	void Application::Update()
 	{
 		Input::Update();
-		mPlayer.Update();
-		
+		//mPlayer.Update();
+		Time::Update();
+
+		//pPlayer->Update();
+		//for (size_t i = 0; i < mGameObjects.size(); i++)
+		//{
+		//	//(*mGameObjects[i]).
+		//	mGameObjects[i]->Update();
+		//}
 	}
 	void Application::LateUpdate()
 	{
@@ -39,10 +61,61 @@ namespace ya
 	}
 	void Application::Render()
 	{
-		mPlayer.Render(mHdc);
+
+		clearRenderTarget();
+		Time::Render(mBackHdc);
 		
+		//for (size_t i = 0; i < mGameObjects.size(); i++)
+		//{
+		//	//(*mGameObjects[i]).
+		//	mGameObjects[i]->Render(mBackHdc);
+		//}
+		//BackBuffer에 있는걸 원본 Buffer에 복사(그려준다)
+		copyRenderTarget(mBackHdc, mHdc);
+	}
+
+	void Application::clearRenderTarget()
+	{
+		//clear
+		Rectangle(mBackHdc, -1, -1, 1601, 901);
+	}
+
+	void Application::copyRenderTarget(HDC source, HDC dest)
+	{
+		BitBlt(dest, 0, 0, mWidth, mHeight, source, 0, 0, SRCCOPY);
 
 	}
-	
 
+	void Application::adjustWindowRect(HWND hwnd, UINT width, UINT height)
+	{
+		mHwnd = hwnd;
+		mHdc = GetDC(hwnd);
+
+		RECT rect = { 0, 0, width, height };
+		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
+
+		mWidth = rect.right - rect.left;
+		mHeight = rect.bottom - rect.top;
+
+		SetWindowPos(hwnd, nullptr, 0, 0, mWidth, mHeight, 0);
+		ShowWindow(hwnd, true);
+	}
+
+	void Application::createBuffer(UINT width, UINT height)
+	{
+		//윈도우 해상도에 맞는 백버퍼(도화지)생성
+		mBackBitmap = CreateCompatibleBitmap(mHdc, width, height);
+
+		//백버퍼를 가르킬 DC생성
+		mBackHdc = CreateCompatibleDC(mHdc);
+
+		HBITMAP oldBitmap = (HBITMAP)SelectObject(mBackHdc, mBackBitmap);
+		DeleteObject(oldBitmap);
+	}
+
+	void Application::initializeEtc()
+	{
+		Input::Initailize();
+		Time::Initialize();
+	}
 }

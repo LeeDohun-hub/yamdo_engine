@@ -9,7 +9,7 @@ namespace ya
 		Application();
 		~Application();
 
-		void Initialize(HWND hwnd);
+		void Initialize(HWND hwnd, UINT width, UINT height);
 		void Run();
 
 		void Update();
@@ -17,11 +17,23 @@ namespace ya
 		void Render();
 
 	private:
+		void clearRenderTarget();
+		void copyRenderTarget(HDC source, HDC dest);
+		void adjustWindowRect(HWND hwnd, UINT width, UINT height);
+		void createBuffer(UINT width, UINT height);
+		void initializeEtc();
+
+	private:
 		HWND mHwnd;
 		HDC mHdc;
 
-		//플레이어
-		GameObject mPlayer;
+		HDC mBackHdc;
+		HBITMAP mBackBitmap;
+		
+		UINT mWidth;
+		UINT mHeight;
+
+		//std::vector<Scene*> mScenes;
 	};
 }
 
